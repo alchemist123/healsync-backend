@@ -19,8 +19,12 @@ services:
     container_name: healsync-db
     env_file:
       - .env
+    environment:
+      - POSTGRES_USER=${PG_USER_NAME}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DATABASE}
     ports:
-      - '5432:5432'
+      - '${PG_HOST_PORT:-5433}:5432'
     volumes:
       - /root/healsync-backend/volumes/healsync-db-data:/var/lib/postgresql/data
     networks:
