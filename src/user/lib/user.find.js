@@ -2,15 +2,15 @@
 
 const { User } = require('../../../shared/database/models/index.js');
 
-module.exports = async (aadhaar_number) => {
+module.exports = async (phone) => {
   try {
-    if (!aadhaar_number) {
-      throw new Error('aadhaar_number is required');
+    if (!phone) {
+      throw new Error('phone is required');
     }
 
     return await User.findOne({
       where: {
-        aadhaar_number,
+        phone,
       },
     });
   } catch (error) {
