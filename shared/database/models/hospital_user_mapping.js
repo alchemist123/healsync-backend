@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: 'hospital_user_mappings',
-      schema: 'public',
+      schema: 'hospital',
       underscored: true,
       timestamps: true,
       createdAt: 'created_at',
