@@ -7,6 +7,11 @@ module.exports = async (req, res) => {
       abha: {
         abha_address: user.abha_address,
         abha_number: user.abha_number,
+        year_of_birth: user.year_of_birth,
+        month_of_birth: user.month_of_birth,
+        day_of_birth: user.day_of_birth,
+        gender:user.gender,
+        
       },
       last_priscription_date: '2024-01-15',
     };
