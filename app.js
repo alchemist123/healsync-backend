@@ -11,14 +11,16 @@ const chatRouter = require('./src/chat/router');
 const pataiantRouter = require('./src/patiant/router');
 const hospitalRouter = require('./src/hospital/routes');
 app.use(logger);
-app.use(
-  cors({
-    origin: true, // reflect request origin (accept from anywhere)
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With', 'X-Access-Token'],
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
+// Ensure preflight OPTIONS gets CORS headers (fixes CORS on /patient/dashboard and other auth routes)
+app.options('*', cors(corsOptions));
 const medicalDocsRouter = require('./src/medical-docs/router');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -52,6 +54,17 @@ app.use('/medical-docs', medicalDocsRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));
+});
+
+// Error handler: ensure CORS headers on all error responses (401, 404, 500)
+app.use(function (err, req, res, next) {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+  const status = err.status || err.statusCode || 500;
+  res.status(status).json({ message: err.message || 'Internal server error' });
 });
 
 module.exports = app;

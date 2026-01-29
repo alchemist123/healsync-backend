@@ -11,6 +11,6 @@ module.exports = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    throw error;
+    return res.status(401).json({ message: 'Access Denied. No token provided.' });
   }
 };
