@@ -11,7 +11,7 @@ const chatRouter = require('./src/chat/router');
 const pataiantRouter = require('./src/patiant/router');
 
 app.use(logger);
-app.use(cors());
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set('trust proxy', true);
