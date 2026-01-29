@@ -19,7 +19,7 @@ module.exports = async (thread_id, user_id, token_number, doctor_id = null) => {
             token_number,
             thread_id,
             patient_id: user_id,
-            status: 'issued',
+            status: 'active',
             issued_at: new Date(),
             doctor_id: doctor_id
         }, { transaction });

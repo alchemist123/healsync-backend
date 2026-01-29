@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: 'departments',
-      schema: 'public',
+      schema: 'hospital',
       underscored: true,
       timestamps: false,
     },

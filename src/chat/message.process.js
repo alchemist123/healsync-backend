@@ -5,6 +5,8 @@ const { generatePatientToken } = require('./lib/token.service');
 const aai = require('../agents/llm/assemblyai');
 const { triggerBackgroundSummary } = require('../workers/summarization');
 const chatLib = require('./lib');
+const userLib = require('../user/lib');
+const hospitalLib = require('../hospital/lib');
 const doctorService = require('../services/doctor.service');
 const { validate: isUuid } = require('uuid');
 const fs = require('fs');
@@ -30,8 +32,12 @@ const processMessage = async (req, res) => {
             throw new Error('Invalid user_id format. Must be a UUID.');
         }
 
+        const user = await userLib.findById(user_id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
         // 1. Voice Transcription if is_audio is true
-        // Handle is_audio as string (multipart) or boolean (JSON)
         const audioEnabled = is_audio === true || is_audio === 'true';
 
         if (audioEnabled && audioFile) {
@@ -40,20 +46,10 @@ const processMessage = async (req, res) => {
                 audio: audioFile.path
             });
             message = transcript.text;
-
-            // Notify client about the transcription
             res.write(`data: ${JSON.stringify({ type: 'transcript', text: message })}\n\n`);
 
-            // Cleanup temp file
             if (fs.existsSync(audioFile.path)) {
                 fs.unlinkSync(audioFile.path);
-            }
-        } else if (audioEnabled && !audioFile) {
-            // Fallback for backward compatibility if is_audio is true but message is a URL
-            if (message && message.startsWith('http')) {
-                const transcript = await aai.transcripts.transcribe({ audio: message });
-                message = transcript.text;
-                res.write(`data: ${JSON.stringify({ type: 'transcript', text: message })}\n\n`);
             }
         }
 
@@ -71,34 +67,38 @@ const processMessage = async (req, res) => {
         // 3. Get recent history for context
         const history = await chatLib.getRecentMessages(currentThreadId, 5);
 
-        // 4. Get Available Doctors Context
-        const doctorContext = await doctorService.getSchedulesForPrompt();
+        // 4. Get Available Doctors Context from Database
+        const doctors = await hospitalLib.doctorList(hospital_id);
+        const doctorContext = doctors.map(d => {
+            const departments = (d.joined_departments || []).map(jd => jd.department?.name).filter(Boolean).join(', ');
+            return `- [Doctor ID: ${d.id}] Dr. ${d.first_name} ${d.last_name} (${departments}): Specialized in ${d.specialization}. Qualification: ${d.qualification}.`;
+        }).join('\n');
 
-        // 5. Stream response from RAG Agent
-        const stream = await RagAgent.streamResponse(message, kbContext, doctorContext, history);
+        // 5. Get response from RAG Agent (JSON format)
+        const agentResponse = await RagAgent.generateResponse(message, kbContext, doctorContext, history);
+        console.log("Agent Response", agentResponse);
+        const { response_message, doctor_id, token_generation } = agentResponse;
 
-        let fullContent = "";
-        for await (const chunk of stream) {
-            const content = chunk.choices[0]?.delta?.content || "";
-            if (content) {
-                fullContent += content;
-                res.write(`data: ${JSON.stringify({ type: 'content', delta: content })}\n\n`);
-            }
-        }
+
 
         // 6. Check for completion -> Token Generation
-        if (fullContent.toLowerCase().includes("all prerequisite procedures are complete")) {
-            const docIdMatch = fullContent.match(/Assigned Doctor ID: ([a-f\d-]{36})/i);
-            const selectedDoctorId = docIdMatch ? docIdMatch[1] : null;
+        if (token_generation === true) {
+            const selectedDoctorId = doctor_id && isUuid(doctor_id) ? doctor_id : null;
 
-            const token_number = generatePatientToken(currentThreadId, user_id);
+            // generatePatientToken is now async
+            const token_number = await generatePatientToken();
+
             await chatLib.completeThread(currentThreadId, user_id, token_number, selectedDoctorId);
             res.write(`data: ${JSON.stringify({ type: 'token_generated', token: token_number, doctor_id: selectedDoctorId })}\n\n`);
+        }
+        else {
+            // Write content to SSE
+            res.write(`data: ${JSON.stringify({ type: 'content', delta: response_message })}\n\n`);
         }
 
         // 7. DB Operations & Background Summary
         await chatLib.saveMessage(currentThreadId, 'user', message);
-        await chatLib.saveMessage(currentThreadId, 'assistant', fullContent);
+        await chatLib.saveMessage(currentThreadId, 'assistant', response_message);
 
         // Trigger background summary
         triggerBackgroundSummary(currentThreadId);
@@ -109,7 +109,6 @@ const processMessage = async (req, res) => {
     } catch (error) {
         console.error('Chat processing error:', error);
 
-        // Cleanup temp file on error
         if (audioFile && fs.existsSync(audioFile.path)) {
             fs.unlinkSync(audioFile.path);
         }
