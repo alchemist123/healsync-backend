@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 allowNull: false,
             },
-            patient_id: {
+            user_id: {
                 type: DataTypes.UUID,
                 allowNull: false,
             },
@@ -41,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
         Thread.hasOne(models.Token, {
             foreignKey: 'thread_id',
             as: 'token',
+        });
+        Thread.belongsTo(models.User, {
+            foreignKey: 'user_id',
+            as: 'user',
         });
     };
 

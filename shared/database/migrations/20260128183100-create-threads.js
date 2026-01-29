@@ -15,7 +15,7 @@ module.exports = {
                     primaryKey: true,
                     allowNull: false
                 },
-                patient_id: {
+                user_id: {
                     type: Sequelize.UUID,
                     allowNull: false
                 },

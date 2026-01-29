@@ -1,21 +1,22 @@
-const SummarizerAgent = require('../agents/summarizer.agent');
+'use strict';
 
-const chatService = require('../services/chat.service');
+const SummarizerAgent = require('../agents/summarizer.agent');
+const chatLib = require('../chat/lib');
 
 /**
  * Non-blocking background summarization logic
  */
 const triggerBackgroundSummary = async (threadId) => {
-    const count = await chatService.getMessageCount(threadId);
+    const count = await chatLib.getMessageCount(threadId);
     if ((count + 1) % 4 === 0) {
         console.log(`[Summary] Triggering background summary for thread ${threadId}`);
 
         // Fire and forget (don't await)
         (async () => {
             try {
-                const recentMessages = await chatService.getRecentMessages(threadId, 4);
+                const recentMessages = await chatLib.getRecentMessages(threadId, 4);
                 const summary = await SummarizerAgent.summarize(recentMessages);
-                await chatService.saveSummary(threadId, summary);
+                await chatLib.saveSummary(threadId, summary);
             } catch (err) {
                 console.error('[Summary] Background Error:', err);
             }

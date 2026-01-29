@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
             },
             thread_id: {
-                type: DataTypes.STRING,
+                type: DataTypes.UUID,
                 allowNull: false,
             },
             appointment_id: {

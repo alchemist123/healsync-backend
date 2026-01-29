@@ -10,10 +10,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-/**
- * @route POST /medical-docs/upload
- * @desc Upload medical documents (prescription, x-ray, mri)
- */
+
 router.post('/upload', upload.single('file'), uploadProcess.handleUpload);
 
 module.exports = router;
