@@ -7,6 +7,7 @@ dotenv.config();
 var app = express();
 var cors = require('cors');
 const abhaRouter = require('./src/abha/router');
+const chatRouter = require('./src/chat/router');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set('trust proxy', true);
@@ -32,6 +33,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/abha', abhaRouter);
+app.use('/chat', chatRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));
