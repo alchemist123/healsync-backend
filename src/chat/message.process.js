@@ -14,7 +14,7 @@ const fs = require('fs');
  */
 const processMessage = async (req, res) => {
     let { message, thread_id, user_id, is_audio, hospital_id } = req.body;
-    const audioFile = req.file;
+    const audioFile = req.files ? req.files.find(f => f.fieldname === 'audio' || f.fieldname === 'file') : null;
 
     // SSE Headers
     res.setHeader('Content-Type', 'text/event-stream');
