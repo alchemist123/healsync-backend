@@ -19,8 +19,6 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 app.use(cors(corsOptions));
-// Ensure preflight OPTIONS gets CORS headers (fixes CORS on /patient/dashboard and other auth routes)
-app.options('*', cors(corsOptions));
 const medicalDocsRouter = require('./src/medical-docs/router');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
