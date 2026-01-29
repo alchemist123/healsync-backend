@@ -45,7 +45,7 @@ app.get('/', (req, res) => {
 });
 app.use('/abha', abhaRouter);
 app.use('/chat', chatRouter);
-app.use('/patiant', pataiantRouter);
+app.use('/patient', pataiantRouter);
 app.use(function (req, res, next) {
   next(createError(404));
 });
