@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      issued_at: {
+      appointment_date: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },

@@ -31,7 +31,7 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
       },
-      issued_at: {
+      appointment_date: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
       },
