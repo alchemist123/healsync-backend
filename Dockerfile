@@ -8,5 +8,9 @@ COPY . .
 RUN npm install --production
 RUN npm i mysql2
 RUN npm install -g pm2
+RUN mkdir -p logs
 
-CMD ["pm2-runtime","--name","healsync-backend","bin/www"]
+# Ensure stdout is unbuffered so docker logs shows output immediately
+ENV FORCE_COLOR=0
+
+CMD ["pm2-runtime","--name","healsync-backend","--no-daemon","bin/www"]
