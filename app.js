@@ -19,6 +19,7 @@ app.use(
     credentials: true,
   })
 );
+const medicalDocsRouter = require('./src/medical-docs/router');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set('trust proxy', true);
@@ -47,6 +48,8 @@ app.use('/abha', abhaRouter);
 app.use('/chat', chatRouter);
 app.use('/patient', pataiantRouter);
 app.use('/hospital', hospitalRouter);
+app.use('/medical-docs', medicalDocsRouter);
+
 app.use(function (req, res, next) {
   next(createError(404));
 });

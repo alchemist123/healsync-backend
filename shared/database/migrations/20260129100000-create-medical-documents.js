@@ -5,23 +5,36 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         await queryInterface.createTable(
             {
-                tableName: 'threads',
-                schema: 'public',
+                tableName: 'medical_documents',
+                schema: 'consultation',
             },
             {
                 id: {
                     type: Sequelize.UUID,
                     defaultValue: Sequelize.UUIDV4,
                     primaryKey: true,
-                    allowNull: false
+                    allowNull: false,
                 },
-                patient_id: {
+                s3_url: {
+                    type: Sequelize.STRING,
+                    allowNull: false,
+                },
+                consultation_id: {
                     type: Sequelize.UUID,
-                    allowNull: false
+                    allowNull: false,
                 },
-                status: {
-                    type: Sequelize.ENUM('active', 'completed'),
-                    defaultValue: 'active'
+                document_type: {
+                    type: Sequelize.STRING,
+                    allowNull: false,
+                },
+                file_type: {
+                    type: Sequelize.STRING,
+                    allowNull: false,
+                    defaultValue: 'image',
+                },
+                doctor_id: {
+                    type: Sequelize.UUID,
+                    allowNull: false,
                 },
                 created_at: {
                     type: Sequelize.DATE,
@@ -39,8 +52,8 @@ module.exports = {
 
     async down(queryInterface, Sequelize) {
         await queryInterface.dropTable({
-            tableName: 'threads',
-            schema: 'public',
+            tableName: 'medical_documents',
+            schema: 'consultation',
         });
     },
 };

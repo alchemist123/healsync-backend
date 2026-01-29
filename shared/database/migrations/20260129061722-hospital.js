@@ -1,7 +1,8 @@
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
+
 const table = { tableName: 'healthcare_institutions', schema: 'hospital' };
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(table, {
@@ -37,10 +38,12 @@ module.exports = {
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
+        defaultValue: Sequelize.NOW,
       },
       updated_at: {
         type: Sequelize.DATE,
         allowNull: false,
+        defaultValue: Sequelize.NOW,
       },
     });
   },

@@ -2,7 +2,7 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable(
       {
         tableName: 'admins',
@@ -30,19 +30,21 @@ module.exports = {
         created_at: {
           type: Sequelize.DATE,
           allowNull: false,
+          defaultValue: Sequelize.NOW,
         },
         updated_at: {
           type: Sequelize.DATE,
           allowNull: false,
+          defaultValue: Sequelize.NOW,
         },
       },
     );
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable({
       tableName: 'admins',
-      schema: 'public'
+      schema: 'public',
     });
-  }
+  },
 };

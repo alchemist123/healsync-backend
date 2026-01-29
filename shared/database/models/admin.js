@@ -1,7 +1,5 @@
 'use strict';
 
-/** @param {import('sequelize').Sequelize} sequelize */
-/** @param {import('sequelize').DataTypes} DataTypes */
 module.exports = (sequelize, DataTypes) => {
   const Admin = sequelize.define(
     'Admin',
@@ -10,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
+        allowNull: false,
       },
       user_id: {
         type: DataTypes.UUID,
@@ -26,12 +25,20 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: 'admins',
+      schema: 'public',
       underscored: true,
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
-    }
+    },
   );
+
+  Admin.associate = (models) => {
+    Admin.belongsTo(models.User, {
+      foreignKey: 'user_id',
+      as: 'user',
+    });
+  };
 
   return Admin;
 };

@@ -5,23 +5,35 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         await queryInterface.createTable(
             {
-                tableName: 'threads',
-                schema: 'public',
+                tableName: 'medicines',
+                schema: 'consultation',
             },
             {
                 id: {
                     type: Sequelize.UUID,
                     defaultValue: Sequelize.UUIDV4,
                     primaryKey: true,
-                    allowNull: false
+                    allowNull: false,
                 },
-                patient_id: {
+                medicine_name: {
+                    type: Sequelize.STRING,
+                    allowNull: false,
+                },
+                dosage: {
+                    type: Sequelize.STRING,
+                    allowNull: true,
+                },
+                intake_timing: {
+                    type: Sequelize.STRING,
+                    allowNull: true,
+                },
+                ingredients: {
+                    type: Sequelize.TEXT,
+                    allowNull: true,
+                },
+                document_id: {
                     type: Sequelize.UUID,
-                    allowNull: false
-                },
-                status: {
-                    type: Sequelize.ENUM('active', 'completed'),
-                    defaultValue: 'active'
+                    allowNull: false,
                 },
                 created_at: {
                     type: Sequelize.DATE,
@@ -39,8 +51,8 @@ module.exports = {
 
     async down(queryInterface, Sequelize) {
         await queryInterface.dropTable({
-            tableName: 'threads',
-            schema: 'public',
+            tableName: 'medicines',
+            schema: 'consultation',
         });
     },
 };

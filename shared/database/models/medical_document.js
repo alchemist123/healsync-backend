@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-    const Schedule = sequelize.define(
-        'Schedule',
+    const MedicalDocument = sequelize.define(
+        'MedicalDocument',
         {
             id: {
                 type: DataTypes.UUID,
@@ -10,38 +10,31 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 allowNull: false,
             },
+            s3_url: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            consultation_id: {
+                type: DataTypes.UUID,
+                allowNull: false,
+            },
+            document_type: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            file_type: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                defaultValue: 'image',
+            },
             doctor_id: {
                 type: DataTypes.UUID,
                 allowNull: false,
             },
-            department_id: {
-                type: DataTypes.UUID,
-                allowNull: false,
-            },
-            day_of_week: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            start_time: {
-                type: DataTypes.TIME,
-                allowNull: false,
-            },
-            end_time: {
-                type: DataTypes.TIME,
-                allowNull: false,
-            },
-            max_appointments: {
-                type: DataTypes.INTEGER,
-                defaultValue: 10,
-            },
-            is_active: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: true,
-            },
         },
         {
-            tableName: 'schedules',
-            schema: 'hospital',
+            tableName: 'medical_documents',
+            schema: 'consultation',
             underscored: true,
             timestamps: true,
             createdAt: 'created_at',
@@ -49,5 +42,12 @@ module.exports = (sequelize, DataTypes) => {
         },
     );
 
-    return Schedule;
+    MedicalDocument.associate = (models) => {
+        MedicalDocument.hasMany(models.Medicine, {
+            foreignKey: 'document_id',
+            as: 'medicines',
+        });
+    };
+
+    return MedicalDocument;
 };

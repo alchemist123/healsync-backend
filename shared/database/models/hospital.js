@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
+        allowNull: false,
       },
       institution_name: {
         type: DataTypes.STRING,
@@ -40,8 +41,15 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
-    }
+    },
   );
+
+  HealthcareInstitution.associate = (models) => {
+    HealthcareInstitution.hasMany(models.HospitalUserMapping, {
+      foreignKey: 'hospital_id',
+      as: 'mappings',
+    });
+  };
 
   return HealthcareInstitution;
 };
