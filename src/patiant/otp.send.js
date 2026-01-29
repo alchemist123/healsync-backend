@@ -9,8 +9,8 @@ module.exports = async (req, res) => {
 
     const ekaToken = await tokenGen();
     const abhaOtp = await abhaOtpGen(ekaToken, aadhaar_number);
-    const user = await userFind(aadhaar_number);
-    if (!user) {
+    const user = await userFind(mobile);
+    if (user === null) {
       await userCreate({ phone: mobile, aadhaar_number, user_type: 'patient' });
     }
 
