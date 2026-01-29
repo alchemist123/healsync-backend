@@ -32,6 +32,10 @@ app.get('/health', (req, res) => {
   });
 });
 
+app.get('/', (req, res) => {
+  res.send('Welcome to HealSync Backend API. Use /health to check status.');
+});
+
 app.use('/abha', abhaRouter);
 app.use('/chat', chatRouter);
 

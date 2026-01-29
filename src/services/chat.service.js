@@ -10,10 +10,36 @@ class ChatService {
      * Find or create a thread
      */
     async getOrCreateThread(threadId, patientId) {
+        if (!threadId) {
+            return await this.getActiveThread(patientId);
+        }
         let [thread] = await Thread.findOrCreate({
             where: { threadId },
             defaults: { patientId }
         });
+        return thread;
+    }
+
+    /**
+     * Get the current active thread for a patient or create a new one
+     */
+    async getActiveThread(patientId) {
+        let thread = await Thread.findOne({
+            where: {
+                patientId,
+                status: 'active'
+            },
+            order: [['created_at', 'DESC']]
+        });
+
+        if (!thread) {
+            const threadId = `thread_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            thread = await Thread.create({
+                threadId,
+                patientId,
+                status: 'active'
+            });
+        }
         return thread;
     }
 
