@@ -1,6 +1,7 @@
 const hospital = require('./lib');
 const logger = require('@shared/utilities/logger');
 const isExist = require('./lib/isExist');
+const User = require('../user/lib');
 module.exports = async (req, res) => {
   try {
     const body = req.body || {};
@@ -19,6 +20,11 @@ module.exports = async (req, res) => {
       return res.status(400).json({ message: 'Hospital already exists' });
     }
     const result = await hospital.create(param);
+    const user = await User.create({
+      phone: body.phone,
+      aadhaar_number: body.aadhaar_number,
+      user_type: 'admin',
+    });
     return res.json(result);
   } catch (error) {
     logger.error('hospital register error', { error: error?.message, stack: error?.stack });
