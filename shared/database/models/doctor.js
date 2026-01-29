@@ -35,14 +35,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true,
       },
-      department_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-      },
-      institution_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-      },
       experience: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -67,14 +59,6 @@ module.exports = (sequelize, DataTypes) => {
     Doctor.belongsTo(models.User, {
       foreignKey: 'user_id',
       as: 'user',
-    });
-    Doctor.belongsTo(models.Department, {
-      foreignKey: 'department_id',
-      as: 'department',
-    });
-    Doctor.belongsTo(models.HealthcareInstitution, {
-      foreignKey: 'institution_id',
-      as: 'institution',
     });
     Doctor.hasMany(models.HospitalDepartmentDoctor, {
       foreignKey: 'doctor_id',

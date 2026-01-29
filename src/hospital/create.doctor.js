@@ -35,8 +35,6 @@ module.exports = async (req, res) => {
       specialization,
       qualification,
       license_number,
-      department_id: deptIds[0],
-      institution_id,
       experience,
     };
     const result = await hospital.addDoctor(param);

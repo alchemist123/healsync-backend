@@ -40,14 +40,6 @@ module.exports = {
           allowNull: false,
           unique: true,
         },
-        department_id: {
-          type: Sequelize.UUID,
-          allowNull: false,
-        },
-        institution_id: {
-          type: Sequelize.UUID,
-          allowNull: false,
-        },
         experience: {
           type: Sequelize.INTEGER,
           allowNull: false,
