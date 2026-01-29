@@ -11,6 +11,6 @@ module.exports = async () => {
     order: [['createdAt', 'DESC']],
   });
   if (!token) {
-    return 'HY-000';
+    return 'HY-001';
   }
 };
