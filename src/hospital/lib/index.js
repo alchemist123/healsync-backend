@@ -8,4 +8,5 @@ hospital.saveSchedule = require('./saveSchedule');
 hospital.getUpcomingWeekSchedule = require('./getUpcomingWeekSchedule');
 hospital.getDashboard = require('./getDashboard');
 hospital.getTodayShifts = require('./getTodayShifts');
+hospital.scheduleList = require('./schedule.list');
 module.exports = hospital;
