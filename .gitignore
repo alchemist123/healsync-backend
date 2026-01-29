@@ -63,3 +63,6 @@ typings/
 
 # Environment variables
 .env
+
+# Volume data
+volumes/    
