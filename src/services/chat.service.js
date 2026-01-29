@@ -9,13 +9,13 @@ class ChatService {
     /**
      * Find or create a thread
      */
-    async getOrCreateThread(threadId, patientId) {
-        if (!threadId) {
-            return await this.getActiveThread(patientId);
+    async getOrCreateThread(thread_id, patient_id) {
+        if (!thread_id) {
+            return await this.getActiveThread(patient_id);
         }
         let [thread] = await Thread.findOrCreate({
-            where: { threadId },
-            defaults: { patientId }
+            where: { thread_id },
+            defaults: { patient_id }
         });
         return thread;
     }
@@ -23,20 +23,20 @@ class ChatService {
     /**
      * Get the current active thread for a patient or create a new one
      */
-    async getActiveThread(patientId) {
+    async getActiveThread(patient_id) {
         let thread = await Thread.findOne({
             where: {
-                patientId,
+                patient_id,
                 status: 'active'
             },
             order: [['created_at', 'DESC']]
         });
 
         if (!thread) {
-            const threadId = `thread_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            const thread_id = `thread_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
             thread = await Thread.create({
-                threadId,
-                patientId,
+                thread_id,
+                patient_id,
                 status: 'active'
             });
         }
@@ -46,23 +46,23 @@ class ChatService {
     /**
      * Save a chat message
      */
-    async saveMessage(threadId, role, content) {
-        return await Message.create({ threadId, role, content });
+    async saveMessage(thread_id, role, content) {
+        return await Message.create({ thread_id, role, content });
     }
 
     /**
      * Get message count for a thread
      */
-    async getMessageCount(threadId) {
-        return await Message.count({ where: { threadId } });
+    async getMessageCount(thread_id) {
+        return await Message.count({ where: { thread_id } });
     }
 
     /**
      * Get recent messages for a thread
      */
-    async getRecentMessages(threadId, limit = 5) {
+    async getRecentMessages(thread_id, limit = 5) {
         const messages = await Message.findAll({
-            where: { threadId },
+            where: { thread_id },
             order: [['created_at', 'DESC']],
             limit
         });
@@ -78,7 +78,6 @@ class ChatService {
             const vectorStr = `[${embedding.join(',')}]`;
 
             // pgvector cosine similarity search
-            // <-> is Euclidean distance, <=> is cosine distance (similarity = 1 - distance)
             const results = await MedicalKnowledge.findAll({
                 attributes: [
                     'title', 'content',
@@ -100,36 +99,37 @@ class ChatService {
     /**
      * Save conversation summary with embedding
      */
-    async saveSummary(threadId, content) {
+    async saveSummary(thread_id, content) {
         try {
             const embedding = await generateEmbedding(content);
-            return await Summary.create({ threadId, content, embedding });
+            return await Summary.create({ thread_id, content, embedding });
         } catch (error) {
             console.error('Summary Save Error:', error);
             // fallback to save without embedding if embedding fails
-            return await Summary.create({ threadId, content });
+            return await Summary.create({ thread_id, content });
         }
     }
 
     /**
      * Mark thread as completed and generate a token record
      */
-    async completeThread(threadId, patientId, tokenNumber) {
+    async completeThread(thread_id, patient_id, token_number, doctor_id = null) {
         const transaction = await sequelize.transaction();
         try {
             // Update thread status
             await Thread.update(
                 { status: 'completed' },
-                { where: { threadId }, transaction }
+                { where: { thread_id }, transaction }
             );
 
             // Create token record
             const token = await Token.create({
-                tokenNumber,
-                threadId,
-                patientId: parseInt(patientId), // Ensure it's an integer as per schema
+                token_number,
+                thread_id,
+                patient_id: patient_id,
                 status: 'issued',
-                issuedAt: new Date()
+                issued_at: new Date(),
+                doctor_id: doctor_id
             }, { transaction });
 
             await transaction.commit();

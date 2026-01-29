@@ -1,12 +1,12 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
     const Thread = sequelize.define('Thread', {
-        threadId: {
+        thread_id: {
             type: DataTypes.STRING,
             primaryKey: true,
             allowNull: false
         },
-        patientId: {
+        patient_id: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -16,13 +16,15 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         tableName: 'threads',
-        underscored: true
+        underscored: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
     });
 
     Thread.associate = (models) => {
-        Thread.hasMany(models.Message, { foreignKey: 'threadId' });
-        Thread.hasMany(models.Summary, { foreignKey: 'threadId' });
-        Thread.hasOne(models.Token, { foreignKey: 'threadId' });
+        Thread.hasMany(models.Message, { foreignKey: 'thread_id' });
+        Thread.hasMany(models.Summary, { foreignKey: 'thread_id' });
+        Thread.hasOne(models.Token, { foreignKey: 'thread_id' });
     };
 
     return Thread;

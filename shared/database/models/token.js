@@ -1,30 +1,30 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
     const Token = sequelize.define('Token', {
-        tokenId: {
+        token_id: {
             allowNull: false,
             autoIncrement: true,
             primaryKey: true,
             type: DataTypes.INTEGER
         },
-        tokenNumber: {
+        token_number: {
             type: DataTypes.STRING,
             unique: true,
             allowNull: false
         },
-        threadId: {
+        thread_id: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        appointmentId: {
+        appointment_id: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        patientId: {
+        patient_id: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        issuedAt: {
+        issued_at: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
         },
@@ -32,25 +32,31 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             defaultValue: 'pending'
         },
-        queuePosition: {
+        queue_position: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        estimatedTime: {
+        estimated_time: {
             type: DataTypes.DATE,
             allowNull: true
         },
-        actualTime: {
+        actual_time: {
             type: DataTypes.DATE,
+            allowNull: true
+        },
+        doctor_id: {
+            type: DataTypes.INTEGER,
             allowNull: true
         }
     }, {
         tableName: 'tokens',
-        underscored: true
+        underscored: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
     });
 
     Token.associate = (models) => {
-        Token.belongsTo(models.Thread, { foreignKey: 'threadId' });
+        Token.belongsTo(models.Thread, { foreignKey: 'thread_id' });
     };
 
     return Token;

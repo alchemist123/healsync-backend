@@ -2,11 +2,11 @@ const RagAgent = require('../agents/rag.agent');
 const { generatePatientToken } = require('./lib/token.service');
 const aai = require('../agents/llm/assemblyai');
 const { triggerBackgroundSummary } = require('../workers/summarization');
-
 const chatService = require('../services/chat.service');
+const doctorService = require('../services/doctor.service');
 
 const processMessage = async (req, res) => {
-    let { message, threadId, patientId, isAudio } = req.body;
+    let { message, thread_id, patient_id, is_audio } = req.body;
 
     // SSE Headers
     res.setHeader('Content-Type', 'text/event-stream');
@@ -14,16 +14,16 @@ const processMessage = async (req, res) => {
     res.setHeader('Connection', 'keep-alive');
 
     try {
-        if (!patientId) {
-            throw new Error('patientId is required');
+        if (!patient_id) {
+            throw new Error('patient_id is required');
         }
 
-        // Ensure thread exists and get full object (handles undefined threadId)
-        const thread = await chatService.getOrCreateThread(threadId, patientId);
-        threadId = thread.threadId; // Ensure we use the actual ID from DB
+        // Ensure thread exists and get full object (handles undefined thread_id)
+        const thread = await chatService.getOrCreateThread(thread_id, patient_id);
+        thread_id = thread.thread_id; // Ensure we use the actual ID from DB
 
         // 1. Voice Transcription
-        if (isAudio && message.startsWith('http')) {
+        if (is_audio && message.startsWith('http')) {
             const transcript = await aai.transcripts.transcribe({ audio: message });
             message = transcript.text;
             res.write(`data: ${JSON.stringify({ type: 'transcript', text: message })}\n\n`);
@@ -33,10 +33,13 @@ const processMessage = async (req, res) => {
         const kbContext = await chatService.getRelevantKbContext(message);
 
         // 3. Get recent history for context
-        const history = await chatService.getRecentMessages(threadId, 5);
+        const history = await chatService.getRecentMessages(thread_id, 5);
 
-        // 4. Stream response from RAG Agent
-        const stream = await RagAgent.streamResponse(message, kbContext, history);
+        // 4. Get Available Doctors Context
+        const doctorContext = await doctorService.getSchedulesForPrompt();
+
+        // 5. Stream response from RAG Agent
+        const stream = await RagAgent.streamResponse(message, kbContext, doctorContext, history);
 
         let fullContent = "";
         for await (const chunk of stream) {
@@ -47,19 +50,23 @@ const processMessage = async (req, res) => {
             }
         }
 
-        // 5. Check for completion -> Token Generation
+        // 6. Check for completion -> Token Generation with Doctor ID
         if (fullContent.toLowerCase().includes("all prerequisite procedures are complete")) {
-            const tokenNumber = generatePatientToken(threadId, patientId);
-            await chatService.completeThread(threadId, patientId, tokenNumber);
-            res.write(`data: ${JSON.stringify({ type: 'token_generated', token: tokenNumber })}\n\n`);
+            // Extract Doctor ID from response (looking for "Assigned Doctor ID: [ID]")
+            const docIdMatch = fullContent.match(/Assigned Doctor ID: (\d+)/i);
+            const selectedDoctorId = docIdMatch ? parseInt(docIdMatch[1]) : null;
+
+            const token_number = generatePatientToken(thread_id, patient_id);
+            await chatService.completeThread(thread_id, patient_id, token_number, selectedDoctorId);
+            res.write(`data: ${JSON.stringify({ type: 'token_generated', token: token_number, doctor_id: selectedDoctorId })}\n\n`);
         }
 
-        // 6. DB Operations & Background Summary
-        await chatService.saveMessage(threadId, 'user', message);
-        await chatService.saveMessage(threadId, 'assistant', fullContent);
+        // 7. DB Operations & Background Summary
+        await chatService.saveMessage(thread_id, 'user', message);
+        await chatService.saveMessage(thread_id, 'assistant', fullContent);
 
         // Trigger background summary
-        triggerBackgroundSummary(threadId);
+        triggerBackgroundSummary(thread_id);
 
         res.write('event: end\ndata: [DONE]\n\n');
         res.end();

@@ -24,7 +24,9 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         tableName: 'medical_knowledge',
-        underscored: true
+        underscored: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
     });
 
     return MedicalKnowledge;

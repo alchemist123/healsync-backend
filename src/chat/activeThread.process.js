@@ -5,17 +5,17 @@ const chatService = require('../services/chat.service');
  * If no active thread exists, a new one is created and returned.
  */
 const getActiveThread = async (req, res) => {
-    const { patientId } = req.query;
+    const { patient_id } = req.query;
 
-    if (!patientId) {
-        return res.status(400).json({ error: 'patientId is required' });
+    if (!patient_id) {
+        return res.status(400).json({ error: 'patient_id is required' });
     }
 
     try {
-        const thread = await chatService.getActiveThread(patientId);
+        const thread = await chatService.getActiveThread(patient_id);
         res.json({
             success: true,
-            threadId: thread.threadId,
+            thread_id: thread.thread_id,
             status: thread.status
         });
     } catch (error) {

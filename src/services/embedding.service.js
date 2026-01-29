@@ -1,8 +1,6 @@
 const openai = require('../agents/llm/openai');
 
-/**
- * Service to generate embeddings using OpenAI
- */
+
 const generateEmbedding = async (text) => {
     try {
         const response = await openai.embeddings.create({

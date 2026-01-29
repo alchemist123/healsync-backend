@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        threadId: {
+        thread_id: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -20,11 +20,13 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         tableName: 'messages',
-        underscored: true
+        underscored: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
     });
 
     Message.associate = (models) => {
-        Message.belongsTo(models.Thread, { foreignKey: 'threadId' });
+        Message.belongsTo(models.Thread, { foreignKey: 'thread_id' });
     };
 
     return Message;
