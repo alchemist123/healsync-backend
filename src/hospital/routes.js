@@ -3,9 +3,8 @@ const Router = require('express').Router;
 const createDoctor = require('./create.doctor');
 const listDepartments = require('./list.departments');
 const listDoctors = require('./list.doctors');
-const createDutySchedule = require('./create.duty-schedule');
-const saveSchedule = require('./save.schedule');
-const getUpcomingSchedule = require('./get.upcoming-schedule');
+const otpSend = require('./otp.send');
+const otpVerify = require('./otp.verify');
 const hospitalRouter = Router();
 
 hospitalRouter.post('/register', register);
@@ -15,5 +14,7 @@ hospitalRouter.get('/doctors', listDoctors);
 hospitalRouter.post('/schedule/duty', createDutySchedule);
 hospitalRouter.post('/schedule/save', saveSchedule);
 hospitalRouter.get('/schedule/upcoming', getUpcomingSchedule);
+hospitalRouter.post('/otp/send', otpSend);
+hospitalRouter.post('/otp/verify', otpVerify);
 
 module.exports = hospitalRouter;

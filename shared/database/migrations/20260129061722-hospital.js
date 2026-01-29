@@ -1,6 +1,5 @@
 'use strict';
 
-
 const table = { tableName: 'healthcare_institutions', schema: 'hospital' };
 
 module.exports = {
@@ -10,6 +9,10 @@ module.exports = {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
+        allowNull: false,
+      },
+      user_id: {
+        type: Sequelize.UUID,
         allowNull: false,
       },
       institution_name: {

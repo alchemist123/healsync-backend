@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         allowNull: false,
       },
+      user_id: {
+        type: DataTypes.UUID,
+      },
       institution_name: {
         type: DataTypes.STRING,
         allowNull: false,
