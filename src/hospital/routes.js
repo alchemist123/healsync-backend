@@ -5,6 +5,9 @@ const listDepartments = require('./list.departments');
 const listDoctors = require('./list.doctors');
 const otpSend = require('./otp.send');
 const otpVerify = require('./otp.verify');
+const createDutySchedule = require('./create.duty-schedule');
+const saveSchedule = require('./save.schedule');
+const getUpcomingSchedule = require('./get.upcoming-schedule');
 const hospitalRouter = Router();
 
 hospitalRouter.post('/register', register);
