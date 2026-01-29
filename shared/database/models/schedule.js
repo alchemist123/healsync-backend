@@ -18,6 +18,14 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.UUID,
                 allowNull: false,
             },
+            institution_id: {
+                type: DataTypes.UUID,
+                allowNull: true,
+            },
+            schedule_date: {
+                type: DataTypes.DATEONLY,
+                allowNull: true,
+            },
             day_of_week: {
                 type: DataTypes.STRING,
                 allowNull: false,
@@ -41,13 +49,18 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             tableName: 'schedules',
-            schema: 'hospital',
+            schema: 'consultation',
             underscored: true,
             timestamps: true,
             createdAt: 'created_at',
             updatedAt: 'updated_at',
         },
     );
+
+    Schedule.associate = (models) => {
+        Schedule.belongsTo(models.Doctor, { foreignKey: 'doctor_id', as: 'doctor' });
+        Schedule.belongsTo(models.Department, { foreignKey: 'department_id', as: 'department' });
+    };
 
     return Schedule;
 };

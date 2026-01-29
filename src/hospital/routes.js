@@ -3,11 +3,17 @@ const Router = require('express').Router;
 const createDoctor = require('./create.doctor');
 const listDepartments = require('./list.departments');
 const listDoctors = require('./list.doctors');
+const createDutySchedule = require('./create.duty-schedule');
+const saveSchedule = require('./save.schedule');
+const getUpcomingSchedule = require('./get.upcoming-schedule');
 const hospitalRouter = Router();
 
 hospitalRouter.post('/register', register);
 hospitalRouter.post('/doctor', createDoctor);
 hospitalRouter.get('/departments', listDepartments);
 hospitalRouter.get('/doctors', listDoctors);
+hospitalRouter.post('/schedule/duty', createDutySchedule);
+hospitalRouter.post('/schedule/save', saveSchedule);
+hospitalRouter.get('/schedule/upcoming', getUpcomingSchedule);
 
 module.exports = hospitalRouter;

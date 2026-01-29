@@ -1,6 +1,9 @@
-const hospital = {}
+const hospital = {};
 hospital.create = require('./create.hospital');
 hospital.addDoctor = require('./add.doctor');
 hospital.mapDept = require('./map.dept');
-hospital.doctorList = require('./doctor.list');
+hospital.listDoctors = require('./doctor.list');
+hospital.generateDutySchedule = require('./generateDutySchedule');
+hospital.saveSchedule = require('./saveSchedule');
+hospital.getUpcomingWeekSchedule = require('./getUpcomingWeekSchedule');
 module.exports = hospital;

@@ -23,14 +23,16 @@ module.exports = {
       { id: crypto.randomUUID(), name: 'Radiology' },
     ];
 
-    await queryInterface.bulkInsert('departments', departments, {
-      schema: 'public',
-    });
+    await queryInterface.bulkInsert(
+      { tableName: 'departments', schema: 'hospital' },
+      departments,
+      {},
+    );
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete(
-      { tableName: 'departments', schema: 'public' },
+      { tableName: 'departments', schema: 'hospital' },
       null,
       {},
     );
