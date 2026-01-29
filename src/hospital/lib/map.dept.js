@@ -12,7 +12,7 @@ for (const deptId of department_id) {
   // Check if the mapping already exists
   const exists = await HospitalDepartmentDoctor.findOne({
     where: {
-      hospital_id: institution_id,
+      institution_id,
       department_id: deptId,
       doctor_id,
     }
@@ -20,8 +20,8 @@ for (const deptId of department_id) {
 
   // If not exists, create the mapping
   if (!exists) {
-    const mapping = await HospitalDepartmentDoctor.create({
-      hospital_id: institution_id,
+    const mapping = await DepartmentDoctorMap.create({
+      institution_id,
       department_id: deptId,
       doctor_id
     });
