@@ -35,18 +35,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         defaultValue: 'pending',
       },
-      queue_position: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      estimated_time: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      actual_time: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
       doctor_id: {
         type: DataTypes.UUID,
         allowNull: true,
