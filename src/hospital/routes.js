@@ -8,8 +8,10 @@ const otpVerify = require('./otp.verify');
 const createDutySchedule = require('./create.duty-schedule');
 const saveSchedule = require('./save.schedule');
 const getUpcomingSchedule = require('./get.upcoming-schedule');
+const dashboard = require('./dashboard');
 const hospitalRouter = Router();
 
+hospitalRouter.get('/dashboard', dashboard);
 hospitalRouter.post('/register', register);
 hospitalRouter.post('/doctor', createDoctor);
 hospitalRouter.get('/departments', listDepartments);
@@ -17,6 +19,7 @@ hospitalRouter.get('/doctors', listDoctors);
 hospitalRouter.post('/schedule/duty', createDutySchedule);
 hospitalRouter.post('/schedule/save', saveSchedule);
 hospitalRouter.get('/schedule/upcoming', getUpcomingSchedule);
+hospitalRouter.get('/schedule/today', require('./list.today-shifts'));
 hospitalRouter.post('/otp/send', otpSend);
 hospitalRouter.post('/otp/verify', otpVerify);
 

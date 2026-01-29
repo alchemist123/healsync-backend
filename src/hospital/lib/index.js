@@ -6,4 +6,6 @@ hospital.listDoctors = require('./doctor.list');
 hospital.generateDutySchedule = require('./generateDutySchedule');
 hospital.saveSchedule = require('./saveSchedule');
 hospital.getUpcomingWeekSchedule = require('./getUpcomingWeekSchedule');
+hospital.getDashboard = require('./getDashboard');
+hospital.getTodayShifts = require('./getTodayShifts');
 module.exports = hospital;
