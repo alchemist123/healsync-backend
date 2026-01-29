@@ -1,3 +1,5 @@
+const tokenGet = require('./lib/token.get');
+
 module.exports = async (req, res) => {
   try {
     const { user } = req;
@@ -10,20 +12,12 @@ module.exports = async (req, res) => {
         year_of_birth: user.year_of_birth,
         month_of_birth: user.month_of_birth,
         day_of_birth: user.day_of_birth,
-        gender:user.gender,
-        
+        gender: user.gender,
       },
       last_priscription_date: '2024-01-15',
     };
 
-    const token = {
-      token_number: '009',
-      doctor_name: 'Anuroop',
-      doctor_specialization: 'Cardiologist',
-      current_token: '004',
-      approx_waiting_time: '30 mins',
-    };
-
+    const token = await tokenGet(user.user_id);
     dashboardData.token = token;
 
     return res.status(200).json({
