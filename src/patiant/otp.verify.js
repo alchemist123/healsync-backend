@@ -3,6 +3,9 @@ const abhaSuggest = require('../abha/lib/abha.suggest');
 const tokenGen = require('../abha/lib/token.gen');
 const abhaLogin = require('../abha/lib/abha.login');
 const abhaOtpVerify = require('../abha/lib/abha.otp.verify');
+const userFind = require('../user/lib/user.find');
+const patientCreate = require('./lib/patient.create');
+const patientFind = require('./lib/patient.find');
 
 module.exports = async (req, res) => {
   try {
@@ -24,10 +27,28 @@ module.exports = async (req, res) => {
       if (otpVerify.abha_profiles.lenght > 0) {
         const abhaId = otpVerify.abha_profiles[0].abha_address;
         const abhaProfile = await abhaLogin(token, abhaId, txn_id);
+
+        const user = await userFind(mobile);
+        if (user) {
+          const patient = await patientFind(user.id);
+          if (!patient) {
+            await patientCreate({ ...abhaProfile.profile, user_id: user.id });
+          }
+        }
+
         return res.status(200).json(abhaProfile);
       } else {
         const abhaId = await abhaSuggest(ekaToken);
         const newAbhaProfile = await abhaCreate(ekaToken, abhaId[0], txn_id);
+
+        const user = await userFind(mobile);
+        if (user) {
+          const patient = await patientFind(user.id);
+          if (!patient) {
+            await patientCreate({ ...newAbhaProfile.profile, user_id: user.id });
+          }
+        }
+
         return res.status(200).json(newAbhaProfile);
       }
     }
