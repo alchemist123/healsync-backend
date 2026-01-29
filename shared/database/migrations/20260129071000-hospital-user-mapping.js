@@ -6,31 +6,32 @@ module.exports = {
     await queryInterface.createTable(
       {
         tableName: 'hospital_user_mappings',
-        schema: 'public'
+        schema: 'public',
       },
       {
         id: {
           type: Sequelize.UUID,
           defaultValue: Sequelize.UUIDV4,
-          primaryKey: true
+          primaryKey: true,
+          allowNull: false,
         },
         hospital_id: {
           type: Sequelize.UUID,
-          allowNull: false
+          allowNull: false,
         },
         user_id: {
           type: Sequelize.UUID,
-          allowNull: false
+          allowNull: false,
         },
         created_at: {
           type: Sequelize.DATE,
-          allowNull: false
+          allowNull: false,
         },
         updated_at: {
           type: Sequelize.DATE,
-          allowNull: false
-        }
-      }
+          allowNull: false,
+        },
+      },
     );
   },
 

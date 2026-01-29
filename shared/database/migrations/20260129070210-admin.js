@@ -6,35 +6,36 @@ module.exports = {
     await queryInterface.createTable(
       {
         tableName: 'admins',
-        schema: 'public'
+        schema: 'public',
       },
       {
         id: {
           type: Sequelize.UUID,
           defaultValue: Sequelize.UUIDV4,
-          primaryKey: true
+          primaryKey: true,
+          allowNull: false,
         },
-        user_id:{
+        user_id: {
           type: Sequelize.UUID,
-          allowNull: false
+          allowNull: false,
         },
-        name:{
+        name: {
           type: Sequelize.STRING,
-          allowNull: false
+          allowNull: false,
         },
-        email:{
+        email: {
           type: Sequelize.STRING,
-          allowNull: false
+          allowNull: false,
         },
         created_at: {
           type: Sequelize.DATE,
-          allowNull: false
+          allowNull: false,
         },
         updated_at: {
           type: Sequelize.DATE,
-          allowNull: false
-        }
-      }
+          allowNull: false,
+        },
+      },
     );
   },
 

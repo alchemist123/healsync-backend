@@ -1,112 +1,113 @@
 'use strict';
 
-module.exports = (sequelize, DataTypes) => {
-  const Patient = sequelize.define(
-    'Patient',
-    {
+/** @type {import('sequelize-cli').Migration} */
+
+const table = { tableName: 'patient', schema: 'patients' };
+
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.sequelize.createSchema('patients');
+
+    await queryInterface.createTable(table, {
       id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
         allowNull: false,
       },
-
       user_id: {
-        type: DataTypes.UUID,
+        type: Sequelize.UUID,
         allowNull: false,
       },
 
       first_name: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
       },
 
       middle_name: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: true,
       },
 
       last_name: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: true,
       },
 
       year_of_birth: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
 
       month_of_birth: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
 
       day_of_birth: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
 
       gender: {
-        type: DataTypes.STRING(10),
+        type: Sequelize.STRING(10),
         allowNull: true,
       },
 
       email: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: true,
-        validate: {
-          isEmail: true,
-        },
       },
 
       address: {
-        type: DataTypes.TEXT,
+        type: Sequelize.TEXT,
         allowNull: true,
       },
 
       emergency_contact: {
-        type: DataTypes.STRING(15),
+        type: Sequelize.STRING(15),
         allowNull: true,
       },
 
       pincode: {
-        type: DataTypes.STRING(10),
+        type: Sequelize.STRING(10),
         allowNull: true,
       },
 
       blood_group: {
-        type: DataTypes.STRING(5),
+        type: Sequelize.STRING(5),
         allowNull: true,
       },
 
       abha_address: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: true,
         unique: true,
       },
 
       abha_number: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: true,
         unique: true,
       },
-    },
-    {
-      tableName: 'patient',
-      schema: 'patients',
-      underscored: true,
-      timestamps: true,
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',
-    },
-  );
 
-  Patient.associate = (models) => {
-    Patient.belongsTo(models.User, {
-      foreignKey: 'user_id',
-      as: 'user',
+      created_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
+
+      updated_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
     });
-  };
+  },
 
-  return Patient;
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable(table);
+    await queryInterface.sequelize.dropSchema('patients');
+  },
 };

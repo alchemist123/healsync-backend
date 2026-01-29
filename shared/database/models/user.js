@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
+        allowNull: false,
       },
       phone: {
         type: DataTypes.STRING,
@@ -24,12 +25,20 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: 'users',
+      schema: 'public',
       underscored: true,
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
-    }
+    },
   );
+
+  User.associate = (models) => {
+    User.hasMany(models.Patient, {
+      foreignKey: 'user_id',
+      as: 'patients',
+    });
+  };
 
   return User;
 };

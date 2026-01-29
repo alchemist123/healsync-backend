@@ -3,8 +3,8 @@ module.exports = {
     up: async (queryInterface, Sequelize) => {
         await queryInterface.createTable('schedules', {
           id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
             primaryKey: true,
             allowNull: false,
           },

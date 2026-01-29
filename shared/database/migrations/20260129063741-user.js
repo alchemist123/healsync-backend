@@ -1,44 +1,55 @@
 'use strict';
 
-module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define(
-    'User',
-    {
-      id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-        allowNull: false,
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable(
+      {
+        tableName: 'users',
+        schema: 'public',
       },
-      phone: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      {
+        id: {
+          type: Sequelize.UUID,
+          defaultValue: Sequelize.UUIDV4,
+          primaryKey: true,
+          allowNull: false,
+        },
+        phone: {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
+
+        aadhaar_number: {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
+
+        user_type: {
+          type: Sequelize.ENUM('admin', 'doctor', 'patient'),
+          allowNull: false,
+        },
+
+        created_at: {
+          type: Sequelize.DATE,
+          allowNull: false,
+          defaultValue: Sequelize.NOW,
+        },
+
+        updated_at: {
+          type: Sequelize.DATE,
+          allowNull: false,
+          defaultValue: Sequelize.NOW,
+        },
       },
-      aadhaar_number: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      user_type: {
-        type: DataTypes.ENUM('admin', 'doctor', 'patient'),
-        allowNull: false,
-      },
-    },
-    {
+    );
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable({
       tableName: 'users',
       schema: 'public',
-      underscored: true,
-      timestamps: true,
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',
-    },
-  );
-
-  User.associate = (models) => {
-    User.hasMany(models.Patient, {
-      foreignKey: 'user_id',
-      as: 'patients',
     });
-  };
-
-  return User;
+    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_users_user_type";');
+  },
 };
