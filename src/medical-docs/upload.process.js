@@ -21,40 +21,45 @@ const handleUpload = async (req, res) => {
     const transaction = await sequelize.transaction();
 
     try {
-        // 1. Upload to S3
+        // 1. Prepare base64 for AI Agent (done before S3 to avoid network round-trip for extraction)
+        let extractedMedicines = [];
+        if (document_type === 'prescription') {
+            const imageBuffer = fs.readFileSync(file.path);
+            const base64Image = imageBuffer.toString('base64');
+            extractedMedicines = await prescriptionAgent.extractMedicineData(base64Image, file.mimetype);
+        }
+
+        // 2. Upload to S3 (for permanent storage)
         const s3Url = await s3Service.uploadFile(file);
 
-        // 2. Save Metadata to DB
+        // 3. Save Metadata to DB
         const medicalDoc = await MedicalDocument.create({
             s3_url: s3Url,
             consultation_id,
             document_type,
             file_type: 'image',
-            doctor_id: parseInt(doctor_id)
+            doctor_id
         }, { transaction });
 
-        // 3. If prescription, extract data
-        let extractedMedicines = [];
-        if (document_type === 'prescription') {
-            extractedMedicines = await prescriptionAgent.extractMedicineData(s3Url);
+        // 4. Save Extracted Medicines
+        if (extractedMedicines && extractedMedicines.length > 0) {
+            const medicineRecords = extractedMedicines.map(med => ({
+                medicine_name: med.medicine_name,
+                dosage: med.dosage,
+                intake_timing: med.intake_timing,
+                ingredients: med.ingredients,
+                document_id: medicalDoc.id
+            }));
 
-            if (extractedMedicines && extractedMedicines.length > 0) {
-                const medicineRecords = extractedMedicines.map(med => ({
-                    medicine_name: med.medicine_name,
-                    dosage: med.dosage,
-                    intake_timing: med.intake_timing,
-                    ingredients: med.ingredients,
-                    document_id: medicalDoc.id
-                }));
-
-                await Medicine.bulkCreate(medicineRecords, { transaction });
-            }
+            await Medicine.bulkCreate(medicineRecords, { transaction });
         }
 
         await transaction.commit();
 
         // Cleanup local temp file
-        fs.unlinkSync(file.path);
+        if (fs.existsSync(file.path)) {
+            fs.unlinkSync(file.path);
+        }
 
         res.status(201).json({
             success: true,
@@ -68,7 +73,7 @@ const handleUpload = async (req, res) => {
         });
 
     } catch (error) {
-        await transaction.rollback();
+        if (transaction) await transaction.rollback();
         console.error('Upload Process Error:', error);
 
         // Cleanup local temp file on error

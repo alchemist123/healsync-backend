@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true,
             },
             intake_timing: {
-                type: DataTypes.STRING,
+                type: DataTypes.JSONB,
                 allowNull: true,
             },
             ingredients: {

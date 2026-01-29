@@ -24,7 +24,7 @@ module.exports = {
           allowNull: true,
         },
         intake_timing: {
-          type: Sequelize.STRING,
+          type: Sequelize.JSONB,
           allowNull: true,
         },
         ingredients: {
