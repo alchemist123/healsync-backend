@@ -9,7 +9,7 @@ dotenv.config();
 const abhaRouter = require('./src/abha/router');
 const chatRouter = require('./src/chat/router');
 const pataiantRouter = require('./src/patiant/router');
-
+const hospitalRouter = require('./src/hospital/routes');
 app.use(logger);
 app.use(
   cors({
@@ -46,6 +46,7 @@ app.get('/', (req, res) => {
 app.use('/abha', abhaRouter);
 app.use('/chat', chatRouter);
 app.use('/patient', pataiantRouter);
+app.use('/hospital', hospitalRouter);
 app.use(function (req, res, next) {
   next(createError(404));
 });
