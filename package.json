@@ -31,11 +31,13 @@
     "pg": "^8.17.2",
     "pgvector": "^0.2.1",
     "sequelize": "^6.37.7",
-    "sequelize-cli": "^6.6.5",
     "winston": "^3.19.0"
   },
   "_moduleAliases": {
     "@shared": "./shared",
     "@middlewares": "./middlewares/"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.5"
   }
 }
