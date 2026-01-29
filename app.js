@@ -11,7 +11,14 @@ const chatRouter = require('./src/chat/router');
 const pataiantRouter = require('./src/patiant/router');
 
 app.use(logger);
-app.use(cors({ origin: '*' }));
+app.use(
+  cors({
+    origin: true, // reflect request origin (accept from anywhere)
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set('trust proxy', true);
