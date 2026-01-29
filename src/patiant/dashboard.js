@@ -18,7 +18,13 @@ module.exports = async (req, res) => {
     };
 
     const token = await tokenGet(user.user_id);
-    dashboardData.token = token;
+    dashboardData.token = {
+      token_number: token?.token_number || null,
+      doctor_name: `${token?.User?.doctor?.first_name} ${token?.User?.doctor?.last_name}` || null,
+      doctor_specialization: token?.User?.doctor?.specialization || null,
+      current_token: '004',
+      approx_waiting_time: '30 mins',
+    };
 
     return res.status(200).json({
       message: 'Dashboard data fetched successfully',

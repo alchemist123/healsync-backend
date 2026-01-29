@@ -1,4 +1,4 @@
-const { Token } = require('../../../shared/database/models/index.js');
+const { Token, User, Doctor } = require('../../../shared/database/models/index.js');
 
 module.exports = async (patient_id) => {
   try {
@@ -11,6 +11,18 @@ module.exports = async (patient_id) => {
         patient_id,
         status: 'active',
       },
+      include: [
+        {
+          model: User,
+          attributes: ['id'],
+          include: [
+            {
+              model: Doctor,
+              as: 'doctor',
+            },
+          ],
+        },
+      ],
     });
   } catch (error) {
     console.error(error);

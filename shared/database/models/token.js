@@ -55,8 +55,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'thread_id',
       as: 'thread',
     });
-    // Token.belongsTo(models.Patient, { foreignKey: 'patient_id', as: 'patient' });
-    // Token.belongsTo(models.User, { foreignKey: 'doctor_id', as: 'doctor' });
+    Token.belongsTo(models.User, { foreignKey: 'doctor_id' });
   };
 
   return Token;
