@@ -4,13 +4,11 @@ const { Op } = Sequelize;
 module.exports = async () => {
   const token = await Token.findOne({
     where: {
-      token: {
+      token_number: {
         [Op.like]: 'HY-%',
       },
     },
-    order: [['createdAt', 'DESC']],
+    order: [['created_at', 'DESC']],
   });
-  if (!token) {
-    return 'HY-001';
-  }
+  return token;
 };

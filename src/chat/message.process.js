@@ -71,12 +71,12 @@ const processMessage = async (req, res) => {
         const doctors = await hospitalLib.doctorList(hospital_id);
         const doctorContext = doctors.map(d => {
             const departments = (d.joined_departments || []).map(jd => jd.department?.name).filter(Boolean).join(', ');
-            return `- [Doctor ID: ${d.id}] Dr. ${d.first_name} ${d.last_name} (${departments}): Specialized in ${d.specialization}. Qualification: ${d.qualification}.`;
+            return `- [Doctor ID: ${d.user_id}] Dr. ${d.first_name} ${d.last_name} (${departments}): Specialized in ${d.specialization}. Qualification: ${d.qualification}.`;
         }).join('\n');
 
         // 5. Get response from RAG Agent (JSON format)
         const agentResponse = await RagAgent.generateResponse(message, kbContext, doctorContext, history);
-        console.log("Agent Response", agentResponse);
+
         const { response_message, doctor_id, token_generation } = agentResponse;
 
 
@@ -89,11 +89,11 @@ const processMessage = async (req, res) => {
             const token_number = await generatePatientToken();
 
             await chatLib.completeThread(currentThreadId, user_id, token_number, selectedDoctorId);
-            res.write(`data: ${JSON.stringify({ type: 'token_generated', token: token_number, doctor_id: selectedDoctorId })}\n\n`);
+            res.write(`data: ${JSON.stringify({ type: 'token_generated', token: token_number, doctor_id: selectedDoctorId, message: response_message })}\n\n`);
         }
         else {
             // Write content to SSE
-            res.write(`data: ${JSON.stringify({ type: 'content', delta: response_message })}\n\n`);
+            res.write(`data: ${JSON.stringify({ type: 'content', message: response_message })}\n\n`);
         }
 
         // 7. DB Operations & Background Summary

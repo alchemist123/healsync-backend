@@ -14,12 +14,16 @@ Retrieved Medical Knowledge:
 Available Doctors & Schedule:
 {{DOCTOR_CONTEXT}}
 
+Conversation History:
+{{HISTORY}}
+
 User Input:
 {{USER_INPUT}}
 
 Guidelines:
 - Identify key symptoms and severity.
 - Use the provided Medical Knowledge to suggest prerequisites (tests, fasting, docs).
+- Use the Conversation History to maintain context of what has already been discussed.
 - Be empathetic, professional, and grounded in the provided context.
 - RECOMMEND A DOCTOR: If symptoms match a specialty, provide the Doctor ID.
 - COMPLETION: If all prerequisites are satisfied and the intake is complete, set "token_generation" to true and provide the "doctor_id".
@@ -35,10 +39,15 @@ Return the response STRICTLY as a JSON object with this format:
 class RagAgent {
 
     static async generateResponse(userInput, kbContext, doctorContext, messages = []) {
+        // Format history for the prompt string
+        const historyText = messages.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n');
+
         const prompt = RAG_AGENT_PROMPT
             .replace('{{KB_CONTEXT}}', kbContext)
             .replace('{{DOCTOR_CONTEXT}}', doctorContext)
+            .replace('{{HISTORY}}', historyText)
             .replace('{{USER_INPUT}}', userInput);
+
 
         const chatMessages = [
             { role: 'system', content: prompt },
