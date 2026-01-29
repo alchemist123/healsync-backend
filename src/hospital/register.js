@@ -14,8 +14,8 @@ module.exports = async (req, res) => {
       country,
       license_number,
     };
-    const isExist = await isExist({ license_number });
-    if (isExist) {
+    const exists = await isExist({ license_number });
+    if (exists) {
       return res.status(400).json({ message: 'Hospital already exists' });
     }
     const result = await hospital.create(param);
