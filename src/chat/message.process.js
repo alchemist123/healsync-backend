@@ -14,8 +14,13 @@ const processMessage = async (req, res) => {
     res.setHeader('Connection', 'keep-alive');
 
     try {
-        // Ensure thread exists
-        await chatService.getOrCreateThread(threadId, patientId);
+        if (!patientId) {
+            throw new Error('patientId is required');
+        }
+
+        // Ensure thread exists and get full object (handles undefined threadId)
+        const thread = await chatService.getOrCreateThread(threadId, patientId);
+        threadId = thread.threadId; // Ensure we use the actual ID from DB
 
         // 1. Voice Transcription
         if (isAudio && message.startsWith('http')) {

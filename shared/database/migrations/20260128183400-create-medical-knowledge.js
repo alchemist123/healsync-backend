@@ -16,7 +16,7 @@ module.exports = {
                 allowNull: false
             },
             embedding: {
-                type: Sequelize.VECTOR(1536),
+                type: 'VECTOR(1536)',
                 allowNull: true
             },
             category: {

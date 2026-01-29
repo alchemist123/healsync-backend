@@ -13,7 +13,7 @@ class SummarizerAgent {
     `;
 
         const response = await openai.chat.completions.create({
-            model: process.env.OPEN_AI_MODEL,
+            model: process.env.OPEN_AI_MODEL || 'gpt-4o-mini',
             messages: [{ role: 'system', content: prompt }],
         });
 

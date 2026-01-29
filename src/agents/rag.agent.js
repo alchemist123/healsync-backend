@@ -36,7 +36,8 @@ class RagAgent {
         ];
 
         return await openai.chat.completions.create({
-            model: process.env.OPEN_AI_MODEL,
+            // model: process.env.OPEN_AI_MODEL,
+            model: 'gpt-4o-mini',
             messages: chatMessages,
             stream: true,
         });
