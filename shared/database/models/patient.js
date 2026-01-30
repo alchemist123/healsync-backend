@@ -106,6 +106,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'user_id',
       as: 'user',
     });
+    Patient.hasMany(models.Token, {
+      foreignKey: 'patient_id',
+      as: 'tokens',
+    });
+
   };
 
   return Patient;
