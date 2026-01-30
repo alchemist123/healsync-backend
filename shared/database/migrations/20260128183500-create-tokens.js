@@ -23,6 +23,10 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: true,
       },
+      schedule_id: {
+        type: Sequelize.UUID,
+        allowNull: true,
+      },
       patient_id: {
         type: Sequelize.UUID,
         allowNull: false,
