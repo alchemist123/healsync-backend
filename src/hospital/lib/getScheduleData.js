@@ -1,6 +1,6 @@
 'use strict';
 
-const { Schedule } = require('@shared/database/models');
+const { Schedule, Token } = require('@shared/database/models');
 const { Op } = require('sequelize');
 
 function getNextMonday(date) {
@@ -22,7 +22,7 @@ function formatTime(val) {
  * Get schedule data grouped by department and doctor with slots.
  * @param {string} institution_id - Healthcare institution UUID
  * @param {Object} options - Optional { week_start, week_end } (YYYY-MM-DD). If omitted, uses upcoming week.
- * @returns {Promise<Array<{ departments: string, doctor_name: string, doctor_id: string, slots: Array<{ date: string, start_time: string, end_time: string }> }>>}
+ * @returns {Promise<Array<{ departments: string, doctor_name: string, doctor_id: string, slots: Array<{ date: string, start_time: string, end_time: string, token_count: number }> }>>}
  */
 async function getScheduleData(institution_id, options = {}) {
   let weekStartStr = options.week_start;
@@ -56,6 +56,21 @@ async function getScheduleData(institution_id, options = {}) {
     ],
   });
 
+  const scheduleIds = [...new Set(rows.map((row) => row.toJSON().id).filter(Boolean))];
+  const tokenCountByScheduleId = new Map();
+
+  if (scheduleIds.length > 0) {
+    const tokenRows = await Token.findAll({
+      where: { schedule_id: { [Op.in]: scheduleIds } },
+      attributes: ['schedule_id'],
+      raw: true,
+    });
+    for (const t of tokenRows) {
+      const sid = t.schedule_id;
+      if (sid) tokenCountByScheduleId.set(sid, (tokenCountByScheduleId.get(sid) || 0) + 1);
+    }
+  }
+
   const keyToEntry = new Map();
 
   for (const row of rows) {
@@ -82,6 +97,7 @@ async function getScheduleData(institution_id, options = {}) {
       date: r.schedule_date,
       start_time: formatTime(r.start_time),
       end_time: formatTime(r.end_time),
+      token_count: tokenCountByScheduleId.get(r.id) ?? 0,
     });
   }
 
