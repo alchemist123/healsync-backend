@@ -37,16 +37,21 @@ async function getScheduleData(institution_id, options = {}) {
     weekEndStr = weekEnd.toISOString().slice(0, 10);
   }
 
+  const where = {
+    schedule_date: { [Op.gte]: weekStartStr, [Op.lte]: weekEndStr },
+    is_active: true,
+  };
+
+  if (institution_id) {
+    where.institution_id = institution_id;
+  }
+
   const rows = await Schedule.findAll({
-    where: {
-      institution_id,
-      schedule_date: { [Op.gte]: weekStartStr, [Op.lte]: weekEndStr },
-      is_active: true,
-    },
+    where,
     include: [
       {
         association: 'doctor',
-        attributes: ['id', 'first_name', 'last_name'],
+        attributes: ['id', 'user_id', 'first_name', 'last_name'],
       },
       { association: 'department', attributes: ['id', 'name'] },
     ],
@@ -79,7 +84,7 @@ async function getScheduleData(institution_id, options = {}) {
     const department = r.department;
     if (!doctor || !department) continue;
 
-    const doctor_id = String(doctor.id);
+    const doctor_id = String(doctor.user_id); // Use user_id as the doctor_id for the agent
     const departments = department.name;
     const key = `${departments}|${doctor_id}`;
 
@@ -94,6 +99,7 @@ async function getScheduleData(institution_id, options = {}) {
 
     const entry = keyToEntry.get(key);
     entry.slots.push({
+      schedule_id: r.id,
       date: r.schedule_date,
       start_time: formatTime(r.start_time),
       end_time: formatTime(r.end_time),

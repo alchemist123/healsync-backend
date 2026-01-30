@@ -6,7 +6,7 @@ const completeActiveTokens = require('../../patiant/lib/token.complete.active');
 /**
  * Mark thread as completed and generate a token record
  */
-module.exports = async (thread_id, user_id, token_number, doctor_id = null) => {
+module.exports = async (thread_id, user_id, token_number, doctor_id = null, schedule_id = null) => {
     const transaction = await sequelize.transaction();
 
     try {
@@ -27,8 +27,9 @@ module.exports = async (thread_id, user_id, token_number, doctor_id = null) => {
             thread_id,
             patient_id: user_id,
             status: 'active',
-            issued_at: new Date(),
-            doctor_id: doctor_id
+            appointment_date: new Date(),
+            doctor_id: doctor_id,
+            schedule_id: schedule_id
         }, { transaction });
 
         await transaction.commit();
