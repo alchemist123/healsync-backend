@@ -9,7 +9,7 @@ const { validate: isUuid } = require('uuid');
  * If no active thread exists, a new one is created and returned.
  */
 const getActiveThread = async (req, res) => {
-    const { user_id } = req.query;
+    const user_id = req.user.user_id;
 
     if (!user_id) {
         return res.status(400).json({ error: 'user_id is required' });

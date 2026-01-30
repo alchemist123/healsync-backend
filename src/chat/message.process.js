@@ -14,10 +14,11 @@ const fs = require('fs');
  * Main chat message processor - Standard JSON Response
  */
 const processMessage = async (req, res) => {
-    let { message, thread_id, user_id, is_audio, hospital_id } = req.body;
+    let { message, thread_id, is_audio, hospital_id } = req.body;
     const audioFile = req.files ? req.files.find(f => f.fieldname === 'audio' || f.fieldname === 'file') : null;
     let transcription = null;
 
+    const user_id = req.user.user_id;
     try {
         if (!user_id) throw new Error('user_id is required');
         if (!isUuid(user_id)) throw new Error('Invalid user_id format. Must be a UUID.');
