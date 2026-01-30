@@ -9,4 +9,6 @@ hospital.getUpcomingWeekSchedule = require('./getUpcomingWeekSchedule');
 hospital.getDashboard = require('./getDashboard');
 hospital.getTodayShifts = require('./getTodayShifts');
 hospital.getScheduleData = require('./getScheduleData');
+hospital.scheduleList = require('./schedule.list');
+hospital.findSchedule = require('./schedule.find');
 module.exports = hospital;
