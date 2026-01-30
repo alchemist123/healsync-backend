@@ -18,7 +18,9 @@ const processMessage = async (req, res) => {
     const audioFile = req.files ? req.files.find(f => f.fieldname === 'audio' || f.fieldname === 'file') : null;
     let transcription = null;
 
-    const user_id = req.user.user_id;
+    const { user } = req
+    console.log("anuroop", user)
+    const user_id = user.user_id
     try {
         if (!user_id) throw new Error('user_id is required');
         if (!isUuid(user_id)) throw new Error('Invalid user_id format. Must be a UUID.');

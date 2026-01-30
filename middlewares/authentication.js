@@ -8,6 +8,7 @@ module.exports = async (req, res, next) => {
     }
     const user = await jwtVerify(token);
     req.user = user;
+    console.log("user", user)
     next();
   } catch (error) {
     console.log(error);
