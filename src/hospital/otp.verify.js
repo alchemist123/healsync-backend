@@ -32,10 +32,7 @@ module.exports = async (req, res) => {
       }
       const token = jwtGen({ user_id: user.id, institution_id: hospital.id, type: user.user_type });
 
-      return res.status(200).json({
-        message: `${user.user_type} signed in successfully`,
-        data: token,
-      });
+      return res.status(200).json({ message: 'Signed in successfully', access_token: token });
     }
   } catch (error) {
     console.log(error);
