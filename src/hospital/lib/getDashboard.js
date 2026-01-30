@@ -46,7 +46,7 @@ async function getDashboard(institution_id) {
     ? await Token.count({
         where: {
           doctor_id: { [Op.in]: doctorIds },
-          issued_at: { [Op.gte]: todayStart, [Op.lt]: tomorrowStart },
+          appointment_date: { [Op.gte]: todayStart, [Op.lt]: tomorrowStart },
         },
       })
     : 0;
